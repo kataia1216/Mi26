@@ -2,7 +2,7 @@
 
 Egy kétszemélyes stratégiai társasjáték Java nyelven megvalósítva, ahol az ember a géppel játszik. A játék alapja a **Mu Torere**, egy ősi maori táblajáték, amelyet csillag alakú táblán játszanak.
 
-![Csillagjáték tábla](kepernyo.png)
+![Csillagjáték tábla](kepernyp.png)
 
 ---
 
