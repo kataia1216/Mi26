@@ -17,19 +17,26 @@ public class MinimaxMI {
         if (lehetsegesLepesek.isEmpty()) return -1;
         
         int legjobbErtek = Integer.MIN_VALUE;
-        int legjobbLepes = lehetsegesLepesek.get(0);
+        List<Integer> legjobbLepesek = new java.util.ArrayList<>();
+        int alfa = Integer.MIN_VALUE;
+        int beta = Integer.MAX_VALUE;
         
         for (int lepes : lehetsegesLepesek) {
             Tabla ujTabla = tabla.lepesVegrehajtasa(lepes);
-            int lepesErtek = minimaxKiertekeles(ujTabla, maxMelyseg - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+            int lepesErtek = minimaxKiertekeles(ujTabla, maxMelyseg - 1, alfa, beta, false);
             
             if (lepesErtek > legjobbErtek) {
                 legjobbErtek = lepesErtek;
-                legjobbLepes = lepes;
+                legjobbLepesek.clear();
+                legjobbLepesek.add(lepes);
+            } else if (lepesErtek == legjobbErtek) {
+                legjobbLepesek.add(lepes);
             }
+            alfa = Math.max(alfa, legjobbErtek);
         }
         
-        return legjobbLepes;
+        java.util.Random rand = new java.util.Random();
+        return legjobbLepesek.get(rand.nextInt(legjobbLepesek.size()));
     }
 
     private int minimaxKiertekeles(Tabla tabla, int melyseg, int alfa, int beta, boolean maximalizaloE) {
@@ -40,7 +47,7 @@ public class MinimaxMI {
             return maximalizaloE ? -10000 - melyseg : 10000 + melyseg; 
         }
         
-        if (melyseg == 0) {
+        if (melyseg <= 0) {
             return tablaKiertekelese(tabla);
         }
 

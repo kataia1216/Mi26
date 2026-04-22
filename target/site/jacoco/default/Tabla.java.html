@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="hu"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tabla.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mu-torere-game</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Tabla.java</span></div><h1>Tabla.java</h1><pre class="source lang-java linenums">import java.util.ArrayList;
+import java.util.List;
+
+public class Tabla {
+    // 0: putahi (kozep)
+    // 1-8: kewai (kulso kor)
+    // 1: ember, 2: gep
+    private int[] mezok;
+
+    // Alapertelmezett allapot: Ember 1..4, Gep 5..8, Kozep 0 ures
+<span class="fc" id="L11">    public Tabla() {</span>
+<span class="fc" id="L12">        mezok = new int[9];</span>
+<span class="fc" id="L13">        mezok[0] = 0; </span>
+<span class="fc" id="L14">        mezok[1] = 1; mezok[2] = 1; mezok[3] = 1; mezok[4] = 1;</span>
+<span class="fc" id="L15">        mezok[5] = 2; mezok[6] = 2; mezok[7] = 2; mezok[8] = 2;</span>
+<span class="fc" id="L16">    }</span>
+
+<span class="fc" id="L18">    public Tabla(Tabla masik) {</span>
+<span class="fc" id="L19">        mezok = masik.mezok.clone();</span>
+<span class="fc" id="L20">    }</span>
+
+<span class="fc" id="L22">    public Tabla(String allapot) {</span>
+<span class="fc" id="L23">        mezok = new int[9];</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        for (int i = 0; i &lt; 9; i++) {</span>
+<span class="fc" id="L25">            mezok[i] = Character.getNumericValue(allapot.charAt(i));</span>
+        }
+<span class="fc" id="L27">    }</span>
+
+    public String allapotSzoveggeAlakitasa() {
+<span class="fc" id="L30">        StringBuilder szovegepito = new StringBuilder();</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        for (int i = 0; i &lt; 9; i++) {</span>
+<span class="fc" id="L32">            szovegepito.append(mezok[i]);</span>
+        }
+<span class="fc" id="L34">        return szovegepito.toString();</span>
+    }
+
+    public int getMezo(int pozicio) {
+<span class="fc" id="L38">        return mezok[pozicio];</span>
+    }
+
+    public int getUresMezoIndex() {
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        for (int i = 0; i &lt; 9; i++) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            if (mezok[i] == 0) return i;</span>
+        }
+<span class="nc" id="L45">        return -1;</span>
+    }
+
+    public List&lt;Integer&gt; getSzabalyosLepesek(int jatekos) {
+<span class="fc" id="L49">        List&lt;Integer&gt; lepesek = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L50">        int uresMezo = getUresMezoIndex();</span>
+
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (uresMezo == 0) {</span>
+            // A kozep ures. A kor menten levo babuk akkor lephetnek be, ha ellenfel van a szomszedjukban
+<span class="fc bfc" id="L54" title="All 2 branches covered.">            for (int i = 1; i &lt;= 8; i++) {</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">                if (mezok[i] == jatekos) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">                    int balSzomszed = (i == 1) ? 8 : i - 1;</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                    int jobbSzomszed = (i == 8) ? 1 : i + 1;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">                    int ellenfel = (jatekos == 1) ? 2 : 1;</span>
+<span class="fc bfc" id="L59" title="All 4 branches covered.">                    if (mezok[balSzomszed] == ellenfel || mezok[jobbSzomszed] == ellenfel) {</span>
+<span class="fc" id="L60">                        lepesek.add(i);</span>
+                    }
+                }
+            }
+        } else {
+            // Egy kulso mezo ures.
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            if (mezok[0] == jatekos) {</span>
+<span class="fc" id="L67">                lepesek.add(0);</span>
+            }
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            int balSzomszed = (uresMezo == 1) ? 8 : uresMezo - 1;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            int jobbSzomszed = (uresMezo == 8) ? 1 : uresMezo + 1;</span>
+            
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            if (mezok[balSzomszed] == jatekos) {</span>
+<span class="fc" id="L73">                lepesek.add(balSzomszed);</span>
+            }
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            if (mezok[jobbSzomszed] == jatekos) {</span>
+<span class="fc" id="L76">                lepesek.add(jobbSzomszed);</span>
+            }
+        }
+
+<span class="fc" id="L80">        return lepesek;</span>
+    }
+
+    public Tabla lepesVegrehajtasa(int honnan) {
+<span class="fc" id="L84">        Tabla ujTabla = new Tabla(this);</span>
+<span class="fc" id="L85">        int uresMezo = this.getUresMezoIndex();</span>
+<span class="fc" id="L86">        ujTabla.mezok[uresMezo] = this.mezok[honnan];</span>
+<span class="fc" id="L87">        ujTabla.mezok[honnan] = 0;</span>
+<span class="fc" id="L88">        return ujTabla;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="hu"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdatbazisKezelo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mu-torere-game</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">AdatbazisKezelo.java</span></div><h1>AdatbazisKezelo.java</h1><pre class="source lang-java linenums">import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class AdatbazisKezelo {
+    private static final String URL = &quot;jdbc:sqlite:csillagjatek.db&quot;;
+
+<span class="fc" id="L11">    public AdatbazisKezelo() {</span>
+<span class="fc" id="L12">        tablaLetrehozasaHaNemLetezik();</span>
+<span class="fc" id="L13">    }</span>
+
+    private Connection csatlakozas() {
+<span class="fc" id="L16">        Connection kapcsolat = null;</span>
+        try {
+<span class="fc" id="L18">            kapcsolat = DriverManager.getConnection(URL);</span>
+<span class="nc" id="L19">        } catch (SQLException e) {</span>
+<span class="fc" id="L20">        }</span>
+<span class="fc" id="L21">        return kapcsolat;</span>
+    }
+
+    private void tablaLetrehozasaHaNemLetezik() {
+<span class="fc" id="L25">        String sql = &quot;CREATE TABLE IF NOT EXISTS game_states (\n&quot;</span>
+                + &quot;    player_name TEXT PRIMARY KEY,\n&quot;
+                + &quot;    board_state TEXT NOT NULL,\n&quot;
+                + &quot;    current_player INTEGER NOT NULL,\n&quot;
+                + &quot;    is_finished BOOLEAN NOT NULL\n&quot;
+                + &quot;);&quot;;
+
+<span class="fc" id="L32">        try (Connection kapcsolat = csatlakozas();</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">             Statement parancs = (kapcsolat != null) ? kapcsolat.createStatement() : null) {</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">            if (parancs != null) {</span>
+<span class="fc" id="L35">                parancs.execute(sql);</span>
+            }
+<span class="nc" id="L37">        } catch (SQLException e) {</span>
+<span class="fc" id="L38">        }</span>
+<span class="fc" id="L39">    }</span>
+
+    public void jatekMentes(String jatekosNev, String tablaAllapot, int aktualisJatekos, boolean fobejezveE) {
+<span class="fc" id="L42">        String sql = &quot;INSERT OR REPLACE INTO game_states(player_name, board_state, current_player, is_finished) &quot; +</span>
+                     &quot;VALUES(?,?,?,?)&quot;;
+
+<span class="fc" id="L45">        try (Connection kapcsolat = csatlakozas();</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">             PreparedStatement elokeszitettParancs = (kapcsolat != null) ? kapcsolat.prepareStatement(sql) : null) {</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">            if (elokeszitettParancs != null) {</span>
+<span class="fc" id="L48">                elokeszitettParancs.setString(1, jatekosNev);</span>
+<span class="fc" id="L49">                elokeszitettParancs.setString(2, tablaAllapot);</span>
+<span class="fc" id="L50">                elokeszitettParancs.setInt(3, aktualisJatekos);</span>
+<span class="fc" id="L51">                elokeszitettParancs.setBoolean(4, fobejezveE);</span>
+<span class="fc" id="L52">                elokeszitettParancs.executeUpdate();</span>
+            }
+<span class="nc" id="L54">        } catch (SQLException e) {</span>
+<span class="fc" id="L55">        }</span>
+<span class="fc" id="L56">    }</span>
+
+    public JatekAdat jatekBetoltes(String jatekosNev) {
+<span class="fc" id="L59">        String sql = &quot;SELECT player_name, board_state, current_player, is_finished FROM game_states WHERE player_name = ?&quot;;</span>
+<span class="fc" id="L60">        JatekAdat adat = null;</span>
+
+<span class="fc" id="L62">        try (Connection kapcsolat = csatlakozas();</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">             PreparedStatement elokeszitettParancs = (kapcsolat != null) ? kapcsolat.prepareStatement(sql) : null) {</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">            if (elokeszitettParancs != null) {</span>
+<span class="fc" id="L65">                elokeszitettParancs.setString(1, jatekosNev);</span>
+<span class="fc" id="L66">                ResultSet eredmeny = elokeszitettParancs.executeQuery();</span>
+
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                if (eredmeny.next()) {</span>
+<span class="fc" id="L69">                    boolean befejezveE = eredmeny.getBoolean(&quot;is_finished&quot;);</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                    if (!befejezveE) {</span>
+<span class="fc" id="L71">                        adat = new JatekAdat();</span>
+<span class="fc" id="L72">                        adat.jatekosNev = eredmeny.getString(&quot;player_name&quot;);</span>
+<span class="fc" id="L73">                        adat.tablaAllapot = eredmeny.getString(&quot;board_state&quot;);</span>
+<span class="fc" id="L74">                        adat.aktualisJatekos = eredmeny.getInt(&quot;current_player&quot;);</span>
+                    }
+                }
+            }
+<span class="nc" id="L78">        } catch (SQLException e) {</span>
+<span class="fc" id="L79">        }</span>
+<span class="fc" id="L80">        return adat; </span>
+    }
+
+<span class="fc" id="L83">    public static class JatekAdat {</span>
+        public String jatekosNev;
+        public String tablaAllapot;
+        public int aktualisJatekos;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
