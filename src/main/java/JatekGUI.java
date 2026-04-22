@@ -114,6 +114,9 @@ public class JatekGUI extends JFrame {
         
         if (lehetsegesLepesek.isEmpty()) {
             adatbazisKezelo.jatekMentes(jatekosNev, tabla.allapotSzoveggeAlakitasa(), aktualisJatekos, true);
+            String gyoztesSzoveg = (aktualisJatekos == 1) ? "Gép" : "Ember";
+            adatbazisKezelo.eredmenyMentes(jatekosNev, gyoztesSzoveg);
+            
             String gyoztesUzenet = (aktualisJatekos == 1) ? "A Gép (O) nyert! Nem maradt lépésed." : "Gratulálok, nyertél (X)! A Gép (O) beszorult.";
             allapotCimke.setText("JÁTÉK VÉGE - " + (aktualisJatekos == 1 ? "Gép nyert" : "Ember nyert"));
             
