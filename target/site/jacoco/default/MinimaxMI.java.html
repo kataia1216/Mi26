@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="hu"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MinimaxMI.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mu-torere-game</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">MinimaxMI.java</span></div><h1>MinimaxMI.java</h1><pre class="source lang-java linenums">import java.util.List;
+
+public class MinimaxMI {
+    private int maxMelyseg;
+    private int gepJatekos; 
+    private int emberJatekos; 
+
+<span class="fc" id="L8">    public MinimaxMI(int maxMelyseg, int gepJatekos) {</span>
+<span class="fc" id="L9">        this.maxMelyseg = maxMelyseg;</span>
+<span class="fc" id="L10">        this.gepJatekos = gepJatekos;</span>
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">        this.emberJatekos = (gepJatekos == 1) ? 2 : 1;</span>
+<span class="fc" id="L12">    }</span>
+
+    public int getLegjobbLepes(Tabla tabla) {
+<span class="fc" id="L15">        List&lt;Integer&gt; lehetsegesLepesek = tabla.getSzabalyosLepesek(gepJatekos);</span>
+        
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        if (lehetsegesLepesek.isEmpty()) return -1;</span>
+        
+<span class="fc" id="L19">        int legjobbErtek = Integer.MIN_VALUE;</span>
+<span class="fc" id="L20">        List&lt;Integer&gt; legjobbLepesek = new java.util.ArrayList&lt;&gt;();</span>
+<span class="fc" id="L21">        int alfa = Integer.MIN_VALUE;</span>
+<span class="fc" id="L22">        int beta = Integer.MAX_VALUE;</span>
+        
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        for (int lepes : lehetsegesLepesek) {</span>
+<span class="fc" id="L25">            Tabla ujTabla = tabla.lepesVegrehajtasa(lepes);</span>
+<span class="fc" id="L26">            int lepesErtek = minimaxKiertekeles(ujTabla, maxMelyseg - 1, alfa, beta, false);</span>
+            
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            if (lepesErtek &gt; legjobbErtek) {</span>
+<span class="fc" id="L29">                legjobbErtek = lepesErtek;</span>
+<span class="fc" id="L30">                legjobbLepesek.clear();</span>
+<span class="fc" id="L31">                legjobbLepesek.add(lepes);</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">            } else if (lepesErtek == legjobbErtek) {</span>
+<span class="fc" id="L33">                legjobbLepesek.add(lepes);</span>
+            }
+<span class="fc" id="L35">            alfa = Math.max(alfa, legjobbErtek);</span>
+<span class="fc" id="L36">        }</span>
+        
+<span class="fc" id="L38">        java.util.Random rand = new java.util.Random();</span>
+<span class="fc" id="L39">        return legjobbLepesek.get(rand.nextInt(legjobbLepesek.size()));</span>
+    }
+
+    private int minimaxKiertekeles(Tabla tabla, int melyseg, int alfa, int beta, boolean maximalizaloE) {
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        int aktualisJatekos = maximalizaloE ? gepJatekos : emberJatekos;</span>
+<span class="fc" id="L44">        List&lt;Integer&gt; szabalyosLepesek = tabla.getSzabalyosLepesek(aktualisJatekos);</span>
+        
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if (szabalyosLepesek.isEmpty()) {</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">            return maximalizaloE ? -10000 - melyseg : 10000 + melyseg; </span>
+        }
+        
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (melyseg &lt;= 0) {</span>
+<span class="fc" id="L51">            return tablaKiertekelese(tabla);</span>
+        }
+
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (maximalizaloE) {</span>
+<span class="fc" id="L55">            int legjobbErtek = Integer.MIN_VALUE;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            for (int lepes : szabalyosLepesek) {</span>
+<span class="fc" id="L57">                Tabla ujTabla = tabla.lepesVegrehajtasa(lepes);</span>
+<span class="fc" id="L58">                int ertek = minimaxKiertekeles(ujTabla, melyseg - 1, alfa, beta, false);</span>
+<span class="fc" id="L59">                legjobbErtek = Math.max(legjobbErtek, ertek);</span>
+<span class="fc" id="L60">                alfa = Math.max(alfa, legjobbErtek);</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                if (beta &lt;= alfa) break; </span>
+<span class="fc" id="L62">            }</span>
+<span class="fc" id="L63">            return legjobbErtek;</span>
+        } else {
+<span class="fc" id="L65">            int legjobbErtek = Integer.MAX_VALUE;</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            for (int lepes : szabalyosLepesek) {</span>
+<span class="fc" id="L67">                Tabla ujTabla = tabla.lepesVegrehajtasa(lepes);</span>
+<span class="fc" id="L68">                int ertek = minimaxKiertekeles(ujTabla, melyseg - 1, alfa, beta, true);</span>
+<span class="fc" id="L69">                legjobbErtek = Math.min(legjobbErtek, ertek);</span>
+<span class="fc" id="L70">                beta = Math.min(beta, legjobbErtek);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                if (beta &lt;= alfa) break; </span>
+<span class="fc" id="L72">            }</span>
+<span class="fc" id="L73">            return legjobbErtek;</span>
+        }
+    }
+
+    private int tablaKiertekelese(Tabla tabla) {
+<span class="fc" id="L78">        int gepLepesSzam = tabla.getSzabalyosLepesek(gepJatekos).size();</span>
+<span class="fc" id="L79">        int emberLepesSzam = tabla.getSzabalyosLepesek(emberJatekos).size();</span>
+<span class="fc" id="L80">        return gepLepesSzam - emberLepesSzam;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

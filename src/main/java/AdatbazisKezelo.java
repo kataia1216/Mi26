@@ -22,17 +22,25 @@ public class AdatbazisKezelo {
     }
 
     private void tablaLetrehozasaHaNemLetezik() {
-        String sql = "CREATE TABLE IF NOT EXISTS game_states (\n"
+        String sql1 = "CREATE TABLE IF NOT EXISTS game_states (\n"
                 + "    player_name TEXT PRIMARY KEY,\n"
                 + "    board_state TEXT NOT NULL,\n"
                 + "    current_player INTEGER NOT NULL,\n"
                 + "    is_finished BOOLEAN NOT NULL\n"
                 + ");";
 
+        String sql2 = "CREATE TABLE IF NOT EXISTS eredmenyek (\n"
+                + "    id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+                + "    jatekos_nev TEXT NOT NULL,\n"
+                + "    gyoztes TEXT NOT NULL,\n"
+                + "    datum DATETIME DEFAULT CURRENT_TIMESTAMP\n"
+                + ");";
+
         try (Connection kapcsolat = csatlakozas();
              Statement parancs = (kapcsolat != null) ? kapcsolat.createStatement() : null) {
             if (parancs != null) {
-                parancs.execute(sql);
+                parancs.execute(sql1);
+                parancs.execute(sql2);
             }
         } catch (SQLException e) {
         }
@@ -49,6 +57,19 @@ public class AdatbazisKezelo {
                 elokeszitettParancs.setString(2, tablaAllapot);
                 elokeszitettParancs.setInt(3, aktualisJatekos);
                 elokeszitettParancs.setBoolean(4, fobejezveE);
+                elokeszitettParancs.executeUpdate();
+            }
+        } catch (SQLException e) {
+        }
+    }
+
+    public void eredmenyMentes(String jatekosNev, String gyoztes) {
+        String sql = "INSERT INTO eredmenyek(jatekos_nev, gyoztes) VALUES(?,?)";
+        try (Connection kapcsolat = csatlakozas();
+             PreparedStatement elokeszitettParancs = (kapcsolat != null) ? kapcsolat.prepareStatement(sql) : null) {
+            if (elokeszitettParancs != null) {
+                elokeszitettParancs.setString(1, jatekosNev);
+                elokeszitettParancs.setString(2, gyoztes);
                 elokeszitettParancs.executeUpdate();
             }
         } catch (SQLException e) {

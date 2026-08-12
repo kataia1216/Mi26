@@ -7,7 +7,7 @@ public class Tabla {
     // 1: ember, 2: gep
     private int[] mezok;
 
-    // Alapertelmezett allapot: Ember 1..4, Gep 5..8, Kozep 0 ures
+
     public Tabla() {
         mezok = new int[9];
         mezok[0] = 0; 
@@ -34,6 +34,7 @@ public class Tabla {
         return szovegepito.toString();
     }
 
+
     public int getMezo(int pozicio) {
         return mezok[pozicio];
     }
@@ -48,9 +49,7 @@ public class Tabla {
     public List<Integer> getSzabalyosLepesek(int jatekos) {
         List<Integer> lepesek = new ArrayList<>();
         int uresMezo = getUresMezoIndex();
-
         if (uresMezo == 0) {
-            // A kozep ures. A kor menten levo babuk akkor lephetnek be, ha ellenfel van a szomszedjukban
             for (int i = 1; i <= 8; i++) {
                 if (mezok[i] == jatekos) {
                     int balSzomszed = (i == 1) ? 8 : i - 1;
@@ -62,11 +61,11 @@ public class Tabla {
                 }
             }
         } else {
-            // Egy kulso mezo ures.
+
             if (mezok[0] == jatekos) {
                 lepesek.add(0);
             }
-            int balSzomszed = (uresMezo == 1) ? 8 : uresMezo - 1;
+            int balSzomszed = (uresMezo == 1) ? 8 : uresMezo - 1;   //ki az üres mező bal és jobb szomszédja.
             int jobbSzomszed = (uresMezo == 8) ? 1 : uresMezo + 1;
             
             if (mezok[balSzomszed] == jatekos) {
@@ -76,7 +75,6 @@ public class Tabla {
                 lepesek.add(jobbSzomszed);
             }
         }
-
         return lepesek;
     }
 
